@@ -1,0 +1,23 @@
+--Criacao da tabela na banco
+
+IF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseParquetFormat') 
+	CREATE EXTERNAL FILE FORMAT [SynapseParquetFormat] 
+	WITH ( FORMAT_TYPE = PARQUET)
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.external_data_sources WHERE name = 'consumezone_dufriodatalake01_dfs_core_windows_net') 
+	CREATE EXTERNAL DATA SOURCE [consumezone_dufriodatalake01_dfs_core_windows_net] 
+	WITH (
+		LOCATION = 'abfss://consumezone@dufriodatalake01.dfs.core.windows.net' 
+	)
+GO
+
+CREATE EXTERNAL TABLE StackDimCor (
+	[Cor] nvarchar(4000)
+	)
+	WITH (
+	LOCATION = 'THIAGO_TESTE/Stack/Df_Dim_Cor/*.parquet',
+	DATA_SOURCE = [consumezone_dufriodatalake01_dfs_core_windows_net],
+	FILE_FORMAT = [SynapseParquetFormat]
+	)
+GO

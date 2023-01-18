@@ -1,0 +1,35 @@
+--criacao script  StackFatoVacinacao
+
+
+
+
+IF NOT EXISTS (SELECT * FROM sys.external_file_formats WHERE name = 'SynapseParquetFormat') 
+	CREATE EXTERNAL FILE FORMAT [SynapseParquetFormat] 
+	WITH ( FORMAT_TYPE = PARQUET)
+GO
+
+IF NOT EXISTS (SELECT * FROM sys.external_data_sources WHERE name = 'consumezone_dufriodatalake01_dfs_core_windows_net') 
+	CREATE EXTERNAL DATA SOURCE [consumezone_dufriodatalake01_dfs_core_windows_net] 
+	WITH (
+		LOCATION = 'abfss://consumezone@dufriodatalake01.dfs.core.windows.net' 
+	)
+GO
+
+CREATE EXTERNAL TABLE StackFatoVacinacao (
+	[PacienteIdade] bigint,
+	[NomeMunicipio] nvarchar(4000),
+	[DataAplicacao] date,
+	[CategoriaVacina] nvarchar(4000),
+	[UFdoEstabelecimento] nvarchar(4000),
+	[Sexo] nvarchar(4000),
+	[Cor] nvarchar(4000),
+	[FabricanteVacina] nvarchar(4000),
+	[RazaoSocialEstabelecimento] nvarchar(4000),
+	[TipoDose] nvarchar(4000)
+	)
+	WITH (
+	LOCATION = 'THIAGO_TESTE/Stack/Fato_DfVacinas/*/*.parquet',
+	DATA_SOURCE = [consumezone_dufriodatalake01_dfs_core_windows_net],
+	FILE_FORMAT = [SynapseParquetFormat]
+	)
+GO
